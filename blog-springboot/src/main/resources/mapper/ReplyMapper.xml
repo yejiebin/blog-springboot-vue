@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjb.mapper.ReplyMapper">
+
+    <resultMap id="Reply" type="Reply">
+        <id property="id" column="id"/>
+        <result property="body" column="body"/>
+        <result property="time" column="time"/>
+        <result property="user.id" column="user_id"/>
+        <result property="user.name" column="user_name"/>
+        <result property="discuss.id" column="discuss_id"/>
+        <result property="reply.id" column="reply_rootid"/>
+    </resultMap>
+
+    <select id="findReplyByDiscussId" parameterType="Long" resultMap="Reply">
+        SELECT
+          r.id, r.body, r.time,
+          u.id user_id, u.name user_name,
+          r.discuss_id, r.reply_rootid
+        FROM reply r
+        LEFT JOIN user u on r.user_id = u.id
+        WHERE r.discuss_id = #{discussId}
+    </select>
+
+    <select id="findReplyById" parameterType="Long" resultMap="Reply">
+        SELECT
+          r.id, r.body, r.time,
+          u.id user_id, u.name user_name,
+          r.discuss_id, r.reply_rootid
+        FROM reply r
+        LEFT JOIN user u on r.user_id = u.id
+        WHERE r.id = #{replyId}
+    </select>
+
+    <insert id="saveReply" parameterType="Reply">
+        INSERT INTO reply
+        VALUES (null,#{body},#{time},#{user.id},#{discuss.id},#{reply.id})
+    </insert>
+
+    <delete id="deleteReplyByDiscussId" parameterType="Long">
+        DELETE FROM reply
+        WHERE discuss_id = #{discussId}
+    </delete>
+
+    <delete id="deleteReplyById" parameterType="Long">
+        DELETE FROM reply
+        WHERE id = #{replyId}
+    </delete>
+</mapper>

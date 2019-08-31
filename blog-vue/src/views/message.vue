@@ -1,0 +1,138 @@
+<template>
+  <el-card id="message" v-loading="loading">
+
+    <div v-if="loading" style="margin: 35% 0"></div>
+    <div v-for="message in messageList" style="text-align: left;padding-left: 2%">
+      <p style="color:#409EFF" class="el-icon-paperclip">&nbsp;{{message.name}}</p>
+      <p style="color: #303133">
+        {{message.body}}
+      </p>
+
+      <el-divider content-position="right">
+        <el-link :underline="false" class="el-icon-delete" v-if="getStoreRoles().indexOf('ADMIN') > -1"
+                 @click="deleteMessage(message.id)"/>
+      </el-divider>
+    </div>
+
+
+    <div style="padding-bottom: 4%">
+      <el-pagination
+        :page-size="pageSize"
+        background
+        layout="prev, pager, next"
+        :total="total"
+        @current-change="currentChange"
+        :current-page="currentPage"
+        @prev-click="currentPage=currentPage-1"
+        @next-click="currentPage=currentPage+1"
+        :hide-on-single-page="true">
+      </el-pagination>
+    </div>
+
+    <div style="width: 60%;margin-left: -9%;padding-top: 2%" class="hidden-xs-only">
+      <el-row>
+        <el-input  v-model="messageBody" placeholder="请输入留言内容" style="width: 40%" size="small"/>
+        <el-button type="primary" style="width: 15%" size="small" @click="sendMessage">
+          留言
+        </el-button>
+      </el-row>
+    </div>
+  </el-card>
+</template>
+
+<script>
+  import message from '@/api/message'
+  import 'element-ui/lib/theme-chalk/display.css'
+
+  export default {
+    name: "message",
+    data () {
+      return {
+        total: 0,        //数据总数
+        messageList: [],   //当前页数据
+        pageSize: 5,    //每页显示数量
+        currentPage: 1,   //当前页数
+        messageBody: '',
+        loading: true //是否加载中
+      }
+    },
+    created () {
+      // this.messageList = [
+      //   {
+      //     name: '阿牛',
+      //     body: 'every good!'
+      //   },
+      //   {
+      //     name: '阿牛',
+      //     body: 'every good!every good!'
+      //   },
+      //   {
+      //     name: '阿牛',
+      //     body: 'every good!every good!every good!every good!every good!'
+      //   }
+      // ]
+      this.loadMessage();
+    },
+    methods: {
+      loadMessage() {
+        message.getMessage(this.currentPage, this.pageSize).then(res => {
+          this.total = res.data.total;
+          this.messageList = res.data.rows;
+          this.loading = false;
+        })
+      },
+      getStoreRoles() {//获取store中存储的roles
+        return this.$store.state.roles
+      },
+      deleteMessage(id) {
+        this.$confirm('是否删除此留言？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          message.deleteMessage(id).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            });
+            this.loadMessage();
+          })
+        }).catch(() =>{})
+      },
+      sendMessage() {
+        if (this.$store.state.token == '') {
+          this.$message({
+            type: 'warning',
+            message: '请先登录'
+          });
+          return;
+        }
+        if (this.messageBody.length < 1) {
+          this.$message({
+            type: 'error',
+            message: '内容不能为空'
+          });
+          return;
+        }
+        message.sendMessage(this.messageBody).then(res => {
+          this.$message({
+            type: 'success',
+            message: '留言成功'
+          });
+          this.messageBody = '';
+          this.loadMessage();
+        })
+      },
+      currentChange(currentPage) {
+        this.currentPage  = currentPage;
+        this.loadMessage();
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  #message {
+    margin: 10px 5% 0 5%;
+  }
+</style>

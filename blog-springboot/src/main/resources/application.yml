@@ -1,0 +1,66 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/blog_2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 5
+      max-active: 20
+      min-idle: 5
+      max-wait: 60000
+      validation-query: SELECT 1
+      validation-query-timeout: 2000
+
+  ###邮箱配置
+  mail:
+    host: smtp.qq.com
+    username: yejiebin1126@qq.com
+    #QQ邮箱的授权码 这个是假的
+    password: uqxgfmnizxwcbdic
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.yjb.model.pojo
+  mapper-locations: classpath:mapper/*.xml
+
+### jwt
+jwt:
+  ###过期时间 s数432000 5天
+  time: 432000
+  ###安全密钥
+  secret: "BlogKUDXSecret"
+  ###token前缀
+  prefix: "Bearer "
+  ###http头key
+  header: "Authorization"
+
+###是否启用swagger
+swagger:
+  enable: true
+
+###站点介绍
+site:
+  introduction: "分享知识，学习知识"
+
+server:
+  port: 8081
+
+ucloud:
+  ufile:
+    public-key: "TOKEN_efc33c0d-41c1-4695-8a8a-45f5c5dffdbd"
+    private-key: "9ccfedb9-bf53-490e-8222-25a2c0e97c22"
+    bucket-name: "yiyezi"
+    region: "cn-gd"
+    suffix: "ufileos.com"
+    expires: 315360000

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjb.mapper.MailkeyMapper">
+
+    <resultMap id="Mailkey" type="Mailkey">
+        <id property="id" column="id"/>
+        <result property="mail" column="mail"/>
+        <result property="code" column="code"/>
+        <result property="sendTime" column="sendTime"/>
+    </resultMap>
+
+   <select id="findMailkeyByCodeAndMail" resultMap="Mailkey">
+       SELECT id, mail, code, sendTime
+       FROM mailkey
+       WHERE mail = #{mail} AND code = #{mailCode}
+   </select>
+
+    <select id="findMailkeyByMail" parameterType="String" resultMap="Mailkey">
+       SELECT id, mail, code, sendTime
+       FROM mailkey
+       WHERE mail = #{mail}
+    </select>
+
+    <insert id="saveMailkey">
+        INSERT INTO mailkey VALUES (null, #{mail}, #{code}, #{sendTime})
+    </insert>
+
+    <delete id="deleteMailkeyByMail" parameterType="String">
+        DELETE FROM mailkey
+        WHERE mail = #{mail}
+    </delete>
+</mapper>

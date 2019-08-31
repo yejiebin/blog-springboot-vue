@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjb.mapper.TagMapper">
+
+    <resultMap id="Tag" type="Tag">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="user.id" column="user_id"/>
+    </resultMap>
+
+    <select id="findTagByBlogId" parameterType="Long" resultMap="Tag">
+        SELECT
+          t.id, t.name
+        FROM tag t
+        LEFT JOIN blog_tag bt on t.id = bt.tag_id
+        WHERE bt.blog_id = #{blogId}
+    </select>
+
+    <!-- 忽略大小写 -->
+    <select id="findTagByTagName" parameterType="String" resultMap="Tag">
+        SELECT id, name, user_id
+        FROM tag
+        WHERE LOWER(name) = LOWER(#{username})
+    </select>
+    <!-- 忽略大小写 -->
+    <select id="findTagByTagNameAndUserId" resultMap="Tag">
+        SELECT id, name, user_id
+        FROM tag
+        WHERE LOWER(name) = LOWER(#{tagName}) AND user_id = #{userId}
+    </select>
+
+    <select id="findTagById" parameterType="Long" resultMap="Tag">
+        SELECT id, name, user_id
+        FROM tag
+        WHERE id = #{tagId}
+    </select>
+
+    <select id="findTagByUserId" parameterType="Long" resultMap="Tag">
+        SELECT id, name, user_id
+        FROM tag
+        WHERE user_id = #{userId}
+    </select>
+
+    <insert id="saveTag" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="Tag">
+        INSERT INTO tag
+        VALUES(null,#{name},#{user.id})
+    </insert>
+
+    <update id="updateTagName">
+        UPDATE tag
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteTagByBlogId" parameterType="Long">
+        DELETE FROM blog_tag
+        WHERE blog_id = #{blogId}
+    </delete>
+
+    <delete id="deleteTag" parameterType="Long">
+        DELETE FROM tag
+        WHERE id = #{tagId}
+    </delete>
+
+</mapper>

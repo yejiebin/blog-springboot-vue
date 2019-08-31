@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjb.mapper.AnnouncementMapper">
+
+    <resultMap id="Announcement" type="Announcement">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="body" column="body"/>
+        <result property="top" column="top"/>
+    </resultMap>
+
+    <select id="getAnnouncementCount" resultType="Long">
+        SELECT COUNT(1)
+        FROM announcement
+    </select>
+
+    <select id="findAnnouncement" resultMap="Announcement">
+        SELECT id, title, body, top
+        FROM announcement
+        ORDER BY top, id DESC
+        LIMIT #{start},#{showCount}
+    </select>
+
+    <update id="updateAnnouncementTop">
+        UPDATE announcement
+        SET top = #{top}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="saveAnnouncement" parameterType="Announcement">
+        INSERT INTO announcement
+        VALUES (null,#{title},#{body},#{top})
+    </insert>
+
+    <delete id="deleteAnnouncementById" parameterType="Long">
+        DELETE FROM announcement
+        WHERE id = #{id}
+    </delete>
+</mapper>

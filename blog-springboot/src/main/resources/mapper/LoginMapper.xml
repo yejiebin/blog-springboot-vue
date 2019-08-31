@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjb.mapper.LoginMapper">
+
+    <resultMap id="Login" type="Login">
+        <id property="id" column="id"/>
+        <result property="user.id" column="user_id"/>
+        <result property="time" column="time"/>
+        <result property="ip" column="ip"/>
+
+    </resultMap>
+
+    <insert id="saveLogin" parameterType="Login">
+        INSERT INTO login values(null,#{user.id},#{time},#{ip})
+    </insert>
+
+    <update id="updateLogin" parameterType="Login">
+        UPDATE login
+        SET time = #{time}, ip = #{ip}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findLoginByUser" parameterType="User" resultMap="Login">
+        SELECT id, user_id, time, ip
+        FROM login
+        WHERE user_id = #{id}
+    </select>
+</mapper>
